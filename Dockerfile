@@ -59,9 +59,12 @@ RUN if [ -n "${CUDA_VERSION_FOR_COMFY}" ]; then \
       /usr/bin/yes | comfy --workspace /comfyui install --version "${COMFYUI_VERSION}" --nvidia; \
     fi
 
-# Install ComfyUI -- clona o master direto (Krea2 precisa de codigo
-# mais novo do que qualquer versao publicada no momento)
-RUN git clone --depth 1 https://github.com/comfy-org/ComfyUI.git /comfyui
+# Install ComfyUI -- baixa o master direto via tarball (Krea2 precisa de
+# codigo mais novo do que qualquer versao publicada no momento)
+RUN wget -q https://github.com/comfy-org/ComfyUI/archive/refs/heads/master.tar.gz -O /tmp/comfyui.tar.gz \
+    && mkdir -p /comfyui \
+    && tar -xzf /tmp/comfyui.tar.gz -C /comfyui --strip-components=1 \
+    && rm /tmp/comfyui.tar.gz
 
 # comfy-cli installs ComfyUI into its own workspace venv (/comfyui/.venv), but
 # start.sh launches ComfyUI with /opt/venv's python. That mismatch leaves the
